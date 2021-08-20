@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getNumItems } from "./cartSlice";
+import { getMemoizedNumItems } from "./cartSlice";
 import styles from "./CartLink.module.css";
 import { useAppSelector } from "../../app/hooks";
 
 export function CartLink() {
-  const numItems = useAppSelector(getNumItems);
+  const numItems = useAppSelector(getMemoizedNumItems);
 
   return (
     <Link to="/cart" className={styles.link}>
