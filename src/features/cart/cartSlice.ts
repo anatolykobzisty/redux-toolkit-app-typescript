@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
-import { AppDispatch, RootState } from "../../app/store";
+import { createSlice, createAsyncThunk, PayloadAction, createSelector } from "@reduxjs/toolkit";
+import { checkout, CartItems } from "../../app/api";
+import { RootState } from "../../app/store";
 
 type CheckoutState = "LOADING" | "READY" | "ERROR";
 
@@ -12,6 +13,11 @@ const initialState: CartState = {
   items: {},
   checkoutState: "READY",
 };
+
+export const checkoutCart = createAsyncThunk("cart/checkout", async (items: CartItems) => {
+  const response = await checkout(items);
+  return response;
+});
 
 const cartSlice = createSlice({
   name: "cart",
@@ -33,23 +39,17 @@ const cartSlice = createSlice({
     },
   },
   extraReducers: function (builder) {
-    builder.addCase("cart/checkout/pending", (state, action) => {
+    builder.addCase(checkoutCart.pending, (state, action) => {
       state.checkoutState = "LOADING";
     });
-    builder.addCase("cart/checkout/fulfilled", (state, action) => {
+    builder.addCase(checkoutCart.fulfilled, (state, action) => {
       state.checkoutState = "READY";
+    });
+    builder.addCase(checkoutCart.rejected, (state, action) => {
+      state.checkoutState = "ERROR";
     });
   },
 });
-
-export function checkout() {
-  return function checkoutThunk(dispatch: AppDispatch) {
-    dispatch({ type: "cart/checkout/pending" });
-    setTimeout(function () {
-      dispatch({ type: "cart/checkout/fulfilled" });
-    }, 500);
-  };
-}
 
 export const { addToCart, removeFromCart, updateQuantity } = cartSlice.actions;
 
@@ -87,15 +87,3 @@ export const getTotalPrice = createSelector(
     return total.toFixed(2);
   }
 );
-
-// export const getTotalPrice = createSelector<RootState, CartItems, Products, string>(
-//   (state) => state.cart.items,
-//   (state) => state.products.products,
-//   (items, products) => {
-//     let total = 0;
-//     for (let id in items) {
-//       total += products[id].price * items[id];
-//     }
-//     return total.toFixed(2);
-//   }
-// );
