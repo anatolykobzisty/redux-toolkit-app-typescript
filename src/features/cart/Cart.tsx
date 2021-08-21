@@ -1,10 +1,12 @@
 import React from "react";
 import { useAppSelector } from "../../app/hooks";
+import { getTotalPrice } from "./cartSlice";
 import styles from "./Cart.module.css";
 
 export function Cart() {
   const products = useAppSelector((state) => state.products.products);
   const items = useAppSelector((state) => state.cart.items);
+  const totalPrice = useAppSelector(getTotalPrice);
 
   return (
     <main className="page">
@@ -31,22 +33,12 @@ export function Cart() {
               </td>
             </tr>
           ))}
-          <tr>
-            <td>Football Cleats</td>
-            <td>
-              <input type="text" className={styles.input} defaultValue={17} />
-            </td>
-            <td>$25.99</td>
-            <td>
-              <button aria-label="Remove Football Cleats from Shopping Cart">X</button>
-            </td>
-          </tr>
         </tbody>
         <tfoot>
           <tr>
             <td>Total</td>
             <td></td>
-            <td className={styles.total}>${0.0}</td>
+            <td className={styles.total}>${totalPrice}</td>
             <td></td>
           </tr>
         </tfoot>
