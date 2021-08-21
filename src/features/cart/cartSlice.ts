@@ -32,6 +32,11 @@ const cartSlice = createSlice({
       state.items[id] = quantity;
     },
   },
+  extraReducers: function (builder) {
+    builder.addCase("cart/checkout/pending", (state, action) => {
+      state.checkoutState = "LOADING";
+    });
+  },
 });
 
 export const { addToCart, removeFromCart, updateQuantity } = cartSlice.actions;
